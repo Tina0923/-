@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Viewer</title>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSV File Viewer</h1>
+    <table id="csv-table"></table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const csvUrl = "https://tina0923.github.io/-/CSV%E6%AA%94.csv";
+            fetch(csvUrl)
+                .then(response => response.text())
+                .then(data => {
+                    const parsedData = Papa.parse(data, { header: true });
+                    const table = document.getElementById("csv-table");
+
+                    // Create table headers
+                    const headers = parsedData.meta.fields;
+                    const thead = document.createElement("thead");
+                    const headerRow = document.createElement("tr");
+                    headers.forEach(header => {
+                        const th = document.createElement("th");
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+
+                    // Create table body
+                    const tbody = document.createElement("tbody");
+                    parsedData.data.forEach(row => {
+                        const tr = document.createElement("tr");
+                        headers.forEach(header => {
+                            const td = document.createElement("td");
+                            td.textContent = row[header];
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+                })
+                .catch(error => console.error('Error fetching CSV file:', error));
+        });
+    </script>
+</body>
+</html>
